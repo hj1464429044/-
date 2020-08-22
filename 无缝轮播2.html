@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            width: 600px;
+            height: 400px;
+            border: 2px solid #000;
+            margin: 100px auto;
+            position: relative;
+            /* overflow: hidden; */
+        }
+
+        ul {
+            /* width: 3000px; */
+            height: 400px;
+            position: relative;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        ul li {
+            width: 600px;
+            height: 400px;
+            /* position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0; */
+            float: left;
+        }
+
+        img {
+            width: 600px;
+            height: 400px;
+        }
+
+        ol {
+            width: 200px;
+            height: 20px;
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+        }
+
+        ol li {
+            width: 20px;
+            height: 20px;
+            background-color: #000;
+            float: left;
+            border-radius: 50%;
+        }
+
+        ol li.active {
+            background-color: #f40;
+        }
+
+        ol li+li {
+            margin-left: 10px;
+        }
+
+        .btn {
+            width: 40px;
+            height: 50px;
+            font-size: 40px;
+            text-align: center;
+            line-height: 50px;
+            color: #fff;
+            position: absolute;
+            top: 50%;
+            margin-top: -25px;
+            background-color: rgba(51, 51, 51, 0.5);
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <ul>
+            <li style="opacity: 1;"><img src="images/1.jpeg" alt=""></li>
+            <li><img src="images/2.jpeg" alt=""></li>
+            <li><img src="images/3.jpeg" alt=""></li>
+            <li><img src="images/4.jpeg" alt=""></li>
+            <li><img src="images/5.jpeg" alt=""></li>
+        </ul>
+        <ol>
+
+        </ol>
+        <p class="btn left">&lt;</p>
+        <p class="btn right">&gt;</p>
+    </div>
+    <script src="tools.js"></script>
+    <script>
+        const ul = my$("ul")[0]
+        const ol = my$("ol")[0]
+        let ulis = my$("li", ul)
+        let length = ulis.length
+        let liWidth = ulis[0].offsetWidth   //每一个li的宽度
+        let currentIndex = 1  //当前图片的索引
+        let nextIndex = 2   //下一张图片的索引
+        let circles = null  //小圆点
+
+        // 复制第一张图片加到最后，复制最后一张图片加到最前面
+        const first = ulis[0].cloneNode(true)  //复制第一张
+        const last = ulis[length - 1].cloneNode(true)  //复制最后一张
+        // 加到ul里面
+        ul.appendChild(first)
+        ul.insertBefore(last, ulis[0])
+        // 动态设置ul的宽度，并且更新length和ulis
+        ulis = my$("li", ul)  //重新获取一次
+        length = ulis.length
+        setStyle(ul, "width", length * liWidth + "px")  //li的个数*li的宽度
+        // 初始化小圆点
+        for (let i = 0; i < length - 2; i++) {  //小圆点个数为length-2
+            let li = document.createElement("li")  //创建li
+            li.className = i === 0 ? "active" : ""  //如果是第一个小圆点，就设置它的className为active，如果不是就设置为空
+            ol.appendChild(li)  //把li加到ol中
+        }
+        circles=my$("li",ol)  //获取小圆点
+        // 设置默认显示第二张图片
+        setStyle(ul,"left",-liWidth+"px")
+        setInterval(() => {
+            //  每一次运动改变ul的left，让它的left减少一个li的宽度
+            animate(ul, { "left": -liWidth * nextIndex ,}, 1500,()=>{
+                // 判断是否到了当前的最后一张图片
+                if(currentIndex>=length-1){
+                    currentIndex=1
+                    nextIndex=2
+                    setStyle(ul,"left",-liWidth+"px")
+                }
+            })   //调用运动函数
+            currentIndex = nextIndex  //让当前图片的索引变成下一张图片的索引
+            nextIndex++  //让下一张图片的索引加1
+        }, 2000)
+    </script>
+</body>
+
+</html>
